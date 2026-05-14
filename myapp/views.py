@@ -127,6 +127,7 @@ def contact_api(request):
     return Response(serializer.errors)
 
 
+
 def contact_api_get(request):
     return render(request,'regional 2.html')
 
