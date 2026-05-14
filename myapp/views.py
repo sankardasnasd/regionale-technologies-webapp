@@ -131,6 +131,19 @@ def contact_api(request):
 def contact_api_get(request):
     return render(request,'regional 2.html')
 
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+
+def admin_delete_enquiry(request, id):
+
+    enquiry = get_object_or_404(Contact, id=id)
+
+    enquiry.delete()
+
+    return JsonResponse({
+        'status': 'success'
+    })
+
 
 from django.shortcuts import render
 from .models import Contact

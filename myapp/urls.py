@@ -9,7 +9,10 @@ urlpatterns = [
     path('admin_login_page/',views.admin_login_page),
     path('admin_login_api/',views.admin_login_api),
     path('admin_logout_api/',views.admin_logout_api),
-
+    path(
+        'admin_delete_enquiry/<int:id>/',
+        views.admin_delete_enquiry
+    ),
     path('home/',views.home),
     path('contact_list/',views.contact_list),
     path('admindashboard',views.admindashboard),
