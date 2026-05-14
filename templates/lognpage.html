@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login • Regional Technologies</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+  <style>
+
+    :root {
+
+      --bg: #06060a;
+
+      --card: #12121c;
+
+      --lime: #c8f135;
+
+      --text: #f0f0f8;
+
+      --text2: #8888a8;
+
+      --border: rgba(255,255,255,.08);
+
+    }
+
+    * {
+
+      margin:0;
+
+      padding:0;
+
+      box-sizing:border-box;
+
+    }
+
+    body {
+
+      font-family: 'Inter', sans-serif;
+
+      background: var(--bg);
+
+      color: var(--text);
+
+      min-height: 100vh;
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:center;
+
+      overflow:hidden;
+
+      position:relative;
+
+    }
+
+    /* BACKGROUND BLOBS */
+
+    .blob {
+
+      position:absolute;
+
+      border-radius:50%;
+
+      filter:blur(90px);
+
+      z-index:0;
+
+    }
+
+    .blob1 {
+
+      width:350px;
+
+      height:350px;
+
+      background:rgba(200,241,53,0.08);
+
+      top:-100px;
+
+      right:-80px;
+
+    }
+
+    .blob2 {
+
+      width:300px;
+
+      height:300px;
+
+      background:rgba(120,100,255,0.08);
+
+      bottom:-80px;
+
+      left:-60px;
+
+    }
+
+    .login-container {
+
+      position:relative;
+
+      z-index:2;
+
+      background: var(--card);
+
+      border:1px solid var(--border);
+
+      border-radius:24px;
+
+      padding:45px 35px;
+
+      width:100%;
+
+      max-width:420px;
+
+      box-shadow:0 20px 50px rgba(0,0,0,0.4);
+
+      backdrop-filter:blur(10px);
+
+    }
+
+    .logo {
+
+      font-family:'Plus Jakarta Sans', sans-serif;
+
+      font-size:2.4rem;
+
+      font-weight:800;
+
+      text-align:center;
+
+      margin-bottom:12px;
+
+      background:linear-gradient(135deg, var(--lime), #88ff00);
+
+      -webkit-background-clip:text;
+
+      -webkit-text-fill-color:transparent;
+
+    }
+
+    h1 {
+
+      text-align:center;
+
+      font-size:1.5rem;
+
+      margin-bottom:35px;
+
+      font-weight:600;
+
+    }
+
+    .input-group {
+
+      margin-bottom:22px;
+
+    }
+
+    label {
+
+      display:block;
+
+      margin-bottom:8px;
+
+      color:var(--text2);
+
+      font-size:14px;
+
+      font-weight:500;
+
+    }
+
+    input {
+
+      width:100%;
+
+      padding:15px 16px;
+
+      background:#0b0b12;
+
+      border:1px solid var(--border);
+
+      border-radius:14px;
+
+      color:var(--text);
+
+      font-size:15px;
+
+      outline:none;
+
+      transition:0.3s;
+
+    }
+
+    input:focus {
+
+      border-color:var(--lime);
+
+      box-shadow:0 0 0 4px rgba(200,241,53,0.12);
+
+    }
+
+    .btn-login {
+
+      width:100%;
+
+      padding:15px;
+
+      background:var(--lime);
+
+      color:#05050a;
+
+      border:none;
+
+      border-radius:14px;
+
+      font-size:16px;
+
+      font-weight:700;
+
+      cursor:pointer;
+
+      transition:0.3s;
+
+      margin-top:5px;
+
+    }
+
+    .btn-login:hover {
+
+      background:#d6f74a;
+
+      transform:translateY(-2px);
+
+      box-shadow:0 10px 30px rgba(200,241,53,0.25);
+
+    }
+
+    .btn-login:disabled {
+
+      opacity:0.7;
+
+      cursor:not-allowed;
+
+    }
+
+    .error {
+
+      color:#ef4444;
+
+      text-align:center;
+
+      margin-top:18px;
+
+      font-size:14px;
+
+    }
+
+    .loading {
+
+      display:none;
+
+      text-align:center;
+
+      margin-top:18px;
+
+      color:var(--text2);
+
+      font-size:14px;
+
+    }
+
+    @keyframes popupShow {
+
+      from {
+
+        opacity:0;
+
+        transform:translate(-50%,-45%) scale(0.8);
+
+      }
+
+      to {
+
+        opacity:1;
+
+        transform:translate(-50%,-50%) scale(1);
+
+      }
+
+    }
+
+    @keyframes tickAnim {
+
+      0% {
+
+        transform:scale(0);
+
+      }
+
+      80% {
+
+        transform:scale(1.15);
+
+      }
+
+      100% {
+
+        transform:scale(1);
+
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="blob blob1"></div>
+
+<div class="blob blob2"></div>
+
+<div class="login-container">
+
+  <div class="logo">Regional Tech</div>
+
+  <h1>Admin Login</h1>
+
+  <form id="loginForm">
+
+    <div class="input-group">
+
+      <label>Username</label>
+
+      <input
+        type="text"
+        id="username"
+        placeholder="Enter username"
+        required
+      />
+
+    </div>
+
+    <div class="input-group">
+
+      <label>Password</label>
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Enter password"
+        required
+      />
+
+    </div>
+
+    <button type="submit" class="btn-login" id="loginBtn">
+
+      Login
+
+    </button>
+
+  </form>
+
+  <div id="error" class="error"></div>
+
+  <div id="loading" class="loading">
+
+    <i class="fas fa-spinner fa-spin"></i>
+
+    Logging in...
+
+  </div>
+
+</div>
+
+<script>
+
+function getCookie(name) {
+
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== '') {
+
+        const cookies = document.cookie.split(';');
+
+        for (let cookie of cookies) {
+
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + '=')) {
+
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    return cookieValue;
+
+}
+
+
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+
+    e.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+
+    const password = document.getElementById('password').value.trim();
+
+    const errorDiv = document.getElementById('error');
+
+    const loadingDiv = document.getElementById('loading');
+
+    const loginBtn = document.getElementById('loginBtn');
+
+    errorDiv.textContent = '';
+
+    loadingDiv.style.display = 'block';
+
+    loginBtn.disabled = true;
+
+    try {
+
+        const response = await fetch('/myapp/admin_login_api/', {
+
+            method: 'POST',
+
+            headers: {
+
+                'Content-Type': 'application/json',
+
+                'X-CSRFToken': getCookie('csrftoken')
+
+            },
+
+            body: JSON.stringify({
+
+                username: username,
+
+                password: password
+
+            })
+
+        });
+
+        console.log("STATUS => ", response.status);
+
+        const data = await response.json();
+
+        console.log("RESPONSE => ", data);
+
+        if (data.success) {
+
+            localStorage.setItem('admin_user', JSON.stringify(data));
+
+            // SUCCESS POPUP
+
+            const popup = document.createElement("div");
+
+            popup.innerHTML = `
+
+            <div style="
+                position:fixed;
+                top:50%;
+                left:50%;
+                transform:translate(-50%,-50%);
+                background:#111;
+                color:white;
+                width:340px;
+                padding:35px 25px;
+                border-radius:22px;
+                text-align:center;
+                z-index:999999;
+                box-shadow:0 0 40px rgba(0,0,0,0.5);
+                animation:popupShow .4s ease;
+                border:1px solid rgba(200,241,53,0.2);
+            ">
+
+                <div style="
+                    width:75px;
+                    height:75px;
+                    background:#c8f135;
+                    border-radius:50%;
+                    margin:auto;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    margin-bottom:20px;
+                    animation:tickAnim .5s ease;
+                ">
+
+                    <span style="
+                        font-size:40px;
+                        color:#111;
+                        font-weight:bold;
+                    ">
+                        ✓
+                    </span>
+
+                </div>
+
+                <h2 style="
+                    margin:0;
+                    font-size:26px;
+                    color:white;
+                    font-weight:700;
+                ">
+                    Login Successful
+                </h2>
+
+                <p style="
+                    margin-top:12px;
+                    color:#bbb;
+                    font-size:15px;
+                    line-height:1.6;
+                ">
+                    Welcome back Admin
+                </p>
+
+            </div>
+
+            `;
+
+            document.body.appendChild(popup);
+
+            setTimeout(() => {
+
+                window.location.href = '/myapp/home/';
+
+            }, 2000);
+
+        }
+
+        else {
+
+            errorDiv.textContent = data.message;
+
+        }
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        errorDiv.textContent = "Server error. Please check your connection.";
+
+    }
+
+    finally {
+
+        loadingDiv.style.display = 'none';
+
+        loginBtn.disabled = false;
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

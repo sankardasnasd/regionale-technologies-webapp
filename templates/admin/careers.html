@@ -1,0 +1,661 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Career Management — Regional Technologies</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg:       #06060a;
+      --bg2:      #0c0c14;
+      --card:     #111119;
+      --card2:    #181825;
+      --lime:     #c8f135;
+      --lime-dim: rgba(200,241,53,.10);
+      --lime-glow:rgba(200,241,53,.22);
+      --border:   rgba(255,255,255,.06);
+      --border2:  rgba(200,241,53,.22);
+      --text:     #f0f0f8;
+      --text2:    #7878a0;
+      --text3:    #33334a;
+      --danger:   #ff4d6d;
+      --danger-dim:rgba(255,77,109,.12);
+      --ff-head:  'Plus Jakarta Sans', sans-serif;
+      --ff-body:  'DM Sans', sans-serif;
+      --r:        14px;
+      --r2:       20px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── GRAIN ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      opacity: .028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+
+    /* ── AMBIENT BLOBS ── */
+    .blob {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      filter: blur(80px);
+    }
+    .blob-1 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(200,241,53,.055) 0%, transparent 70%);
+      top: -160px; right: -100px;
+      animation: bf 12s ease-in-out infinite;
+    }
+    .blob-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(100,60,220,.06) 0%, transparent 70%);
+      bottom: 10%; left: -80px;
+      animation: bf 15s ease-in-out infinite reverse;
+    }
+    @keyframes bf { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-30px)} }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--lime-dim); border-radius: 4px; }
+
+    /* ── WRAPPER ── */
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 1140px; margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 20px;
+      margin-bottom: 56px;
+      opacity: 0; animation: rise .6s .1s ease forwards;
+    }
+    .header-left {}
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--ff-body);
+      font-size: .68rem; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--lime);
+      padding: 6px 14px; border-radius: 30px;
+      background: var(--lime-dim); border: 1px solid var(--lime-glow);
+      margin-bottom: 14px;
+    }
+    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.7)} }
+    .page-title {
+      font-family: var(--ff-head);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; letter-spacing: -1.5px;
+      line-height: 1.05; color: var(--text);
+    }
+    .page-title span {
+      background: linear-gradient(135deg, var(--lime), #88ff00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .page-sub { font-family: var(--ff-body); font-size: .94rem; color: var(--text2); margin-top: 8px; }
+
+    /* stats pill */
+    .stat-pill {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 18px 28px;
+      text-align: center; min-width: 130px;
+    }
+    .stat-pill .sv { font-family: var(--ff-head); font-size: 2rem; font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg,var(--lime),#88ff00); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .stat-pill .sl { font-family: var(--ff-body); font-size: .68rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-top: 2px; }
+
+    /* ── LAYOUT ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media(max-width:900px) { .main-grid { grid-template-columns: 1fr; } }
+
+    /* ── FORM PANEL ── */
+    .form-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      position: sticky; top: 24px;
+      opacity: 0; animation: rise .6s .2s ease forwards;
+    }
+    .form-header {
+      background: linear-gradient(135deg, rgba(200,241,53,.08), rgba(200,241,53,.03));
+      border-bottom: 1px solid var(--border);
+      padding: 28px 30px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .form-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: var(--lime); display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #05050a; flex-shrink: 0;
+    }
+    .form-header h3 {
+      font-family: var(--ff-head); font-size: 1.15rem; font-weight: 800;
+      color: var(--text); letter-spacing: -.4px;
+    }
+    .form-header p { font-family: var(--ff-body); font-size: .8rem; color: var(--text2); margin-top: 2px; }
+
+    .form-body { padding: 28px 30px; }
+
+    .field-group { margin-bottom: 20px; }
+    .field-label {
+      display: block; font-family: var(--ff-body);
+      font-size: .78rem; font-weight: 600; letter-spacing: .5px;
+      color: var(--text2); margin-bottom: 8px; text-transform: uppercase;
+    }
+    .field-input {
+      width: 100%; background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--r);
+      padding: 13px 16px; color: var(--text);
+      font-family: var(--ff-body); font-size: .93rem;
+      outline: none; transition: border-color .25s, box-shadow .25s;
+      appearance: none; -webkit-appearance: none;
+    }
+    .field-input::placeholder { color: var(--text3); }
+    .field-input:focus {
+      border-color: var(--border2);
+      box-shadow: 0 0 0 3px rgba(200,241,53,.08);
+    }
+    textarea.field-input { height: 120px; resize: none; }
+
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '\f078';
+      font-family: 'Font Awesome 6 Free'; font-weight: 900;
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      color: var(--text3); font-size: .7rem; pointer-events: none;
+    }
+
+    .btn-add {
+      width: 100%; background: var(--lime); color: #05050a;
+      border: none; border-radius: var(--r);
+      padding: 15px; font-family: var(--ff-head); font-weight: 700;
+      font-size: .95rem; cursor: pointer; letter-spacing: -.2px;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      box-shadow: 0 4px 22px rgba(200,241,53,.3);
+      transition: all .25s; margin-top: 4px;
+    }
+    .btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,241,53,.45); background: #d6f74a; }
+    .btn-add:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* ── CAREERS PANEL ── */
+    .careers-panel {
+      opacity: 0; animation: rise .6s .35s ease forwards;
+    }
+    .panel-top {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 14px;
+      margin-bottom: 22px;
+    }
+    .panel-title {
+      font-family: var(--ff-head); font-size: 1.1rem; font-weight: 800;
+      color: var(--text); letter-spacing: -.4px;
+    }
+    .panel-count {
+      font-family: var(--ff-body); font-size: .8rem; color: var(--text2); margin-top: 2px;
+    }
+
+    /* filter tabs */
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ftab {
+      padding: 6px 16px; border-radius: 30px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text2); font-size: .79rem; font-family: var(--ff-body);
+      cursor: pointer; transition: all .2s; font-weight: 500;
+    }
+    .ftab.on, .ftab:hover {
+      background: var(--lime); color: #05050a; border-color: var(--lime);
+      font-weight: 700; box-shadow: 0 0 14px rgba(200,241,53,.28);
+    }
+
+    /* career cards */
+    .career-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .career-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: 24px;
+      position: relative; overflow: hidden;
+      transition: all .3s cubic-bezier(.4,0,.2,1);
+      cursor: default;
+    }
+    .career-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--lime), transparent);
+      transform: scaleX(0); transform-origin: left; transition: transform .35s;
+    }
+    .career-card:hover { border-color: var(--border2); transform: translateX(6px); }
+    .career-card:hover::before { transform: scaleX(1); }
+
+    .card-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .card-main { flex: 1; min-width: 0; }
+
+    .job-type-badge {
+      display: inline-block;
+      font-family: var(--ff-head); font-size: .63rem; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 6px; margin-bottom: 12px;
+    }
+    .badge-full  { background: rgba(200,241,53,.12); color: var(--lime); border: 1px solid rgba(200,241,53,.25); }
+    .badge-part  { background: rgba(251,191,36,.1);  color: #fbbf24;    border: 1px solid rgba(251,191,36,.25); }
+    .badge-intern{ background: rgba(139,92,246,.12); color: #a78bfa;    border: 1px solid rgba(139,92,246,.25); }
+
+    .job-title {
+      font-family: var(--ff-head); font-size: 1.08rem; font-weight: 700;
+      color: var(--text); letter-spacing: -.3px; margin-bottom: 6px;
+    }
+    .job-location {
+      font-family: var(--ff-body); font-size: .82rem; color: var(--text2);
+      display: flex; align-items: center; gap: 6px; margin-bottom: 14px;
+    }
+    .job-location i { color: var(--lime); font-size: .75rem; }
+    .job-desc {
+      font-family: var(--ff-body); font-size: .86rem; color: var(--text2);
+      line-height: 1.8;
+      display: -webkit-box; -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    .card-actions { flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+    .btn-del {
+      background: var(--danger-dim); color: var(--danger);
+      border: 1px solid rgba(255,77,109,.2); border-radius: 10px;
+      padding: 9px 16px; font-family: var(--ff-body); font-size: .82rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: 7px;
+      transition: all .25s; white-space: nowrap;
+    }
+    .btn-del:hover { background: var(--danger); color: #fff; border-color: var(--danger); box-shadow: 0 4px 18px rgba(255,77,109,.3); }
+
+    .card-id {
+      font-family: var(--ff-body); font-size: .7rem; color: var(--text3); letter-spacing: .5px;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: 70px 30px;
+      text-align: center;
+    }
+    .empty-icon {
+      width: 72px; height: 72px; border-radius: 18px;
+      background: var(--lime-dim); border: 1px solid var(--lime-glow);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: var(--lime); margin: 0 auto 22px;
+    }
+    .empty-state h3 { font-family: var(--ff-head); font-size: 1.3rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .empty-state p { font-family: var(--ff-body); font-size: .9rem; color: var(--text2); }
+
+    /* ── LOADING SKELETON ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--card) 25%, var(--card2) 50%, var(--card) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+      padding: 14px 22px; border-radius: 12px;
+      font-family: var(--ff-body); font-size: .88rem; font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+      transform: translateY(20px); opacity: 0;
+      transition: all .3s cubic-bezier(.34,1.56,.64,1);
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: #0f2010; border: 1px solid rgba(200,241,53,.3); color: var(--lime); }
+    #toast.error   { background: #200f12; border: 1px solid rgba(255,77,109,.3); color: var(--danger); }
+
+    /* ── CONFIRM DIALOG ── */
+    .modal-bg {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center;
+    }
+    .modal-bg.open { display: flex; animation: fadeIn .2s ease; }
+    .modal-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 22px; padding: 36px; width: 90%; max-width: 400px;
+      text-align: center;
+      animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    .modal-box .warn-icon {
+      width: 60px; height: 60px; border-radius: 15px;
+      background: var(--danger-dim); border: 1px solid rgba(255,77,109,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: var(--danger); margin: 0 auto 20px;
+    }
+    .modal-box h4 { font-family: var(--ff-head); font-size: 1.2rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .modal-box p  { font-family: var(--ff-body); font-size: .88rem; color: var(--text2); line-height: 1.7; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+    .btn-cancel { flex:1; padding:12px; background:transparent; border:1px solid var(--border); color:var(--text2); border-radius:10px; font-family:var(--ff-body); font-size:.88rem; cursor:pointer; transition:all .2s; }
+    .btn-cancel:hover { border-color:var(--border2); color:var(--text); }
+    .btn-confirm-del { flex:1; padding:12px; background:var(--danger); border:none; color:#fff; border-radius:10px; font-family:var(--ff-head); font-size:.88rem; font-weight:700; cursor:pointer; transition:all .2s; }
+    .btn-confirm-del:hover { box-shadow:0 4px 20px rgba(255,77,109,.4); }
+
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes popIn  { from{opacity:0;transform:scale(.88) translateY(16px)} to{opacity:1;transform:scale(1) translateY(0)} }
+    @keyframes rise   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+  </style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div id="toast"></div>
+
+<div class="modal-bg" id="confirmModal">
+  <div class="modal-box">
+    <div class="warn-icon"><i class="fas fa-trash-alt"></i></div>
+    <h4>Delete Career?</h4>
+    <p>This job posting will be permanently removed and cannot be recovered.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-confirm-del" id="confirmBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <div class="header-left">
+      <div class="eyebrow"><span class="dot"></span>Admin Panel</div>
+      <h1 class="page-title">Career <span>Management</span></h1>
+      <p class="page-sub">Post, manage and remove job openings for Regional Technologies.</p>
+    </div>
+    <div class="stat-pill">
+      <div class="sv" id="statCount">0</div>
+      <div class="sl">Active Jobs</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- FORM PANEL -->
+    <aside class="form-panel">
+      <div class="form-header">
+        <div class="form-icon"><i class="fas fa-plus"></i></div>
+        <div>
+          <h3>Post a New Job</h3>
+          <p>Fill in the details below</p>
+        </div>
+      </div>
+      <div class="form-body">
+        <form id="careerForm">
+          <div class="field-group">
+            <label class="field-label">Job Title</label>
+            <input type="text" name="title" class="field-input" placeholder="e.g. Python Django Developer" required/>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Location</label>
+            <input type="text" name="location" class="field-input" placeholder="e.g. Kozhikode" required/>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Job Type</label>
+            <div class="select-wrap">
+              <select name="job_type" class="field-input" required>
+                <option value="">Select Job Type</option>
+                <option value="full-time">Full-Time</option>
+                <option value="part-time">Part-Time</option>
+                <option value="internship">Internship</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Description</label>
+            <textarea name="description" class="field-input" placeholder="Describe the role, responsibilities, and requirements…" required></textarea>
+          </div>
+
+          <button type="submit" class="btn-add" id="submitBtn">
+            <i class="fas fa-plus-circle"></i> Add Career
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- CAREERS PANEL -->
+    <section class="careers-panel">
+      <div class="panel-top">
+        <div>
+          <div class="panel-title">All Postings</div>
+          <div class="panel-count" id="listingCount">Loading…</div>
+        </div>
+        <div class="filter-tabs">
+          <button class="ftab on" onclick="setFilter('all',this)">All</button>
+          <button class="ftab" onclick="setFilter('full-time',this)">Full-Time</button>
+          <button class="ftab" onclick="setFilter('part-time',this)">Part-Time</button>
+          <button class="ftab" onclick="setFilter('internship',this)">Internship</button>
+        </div>
+      </div>
+      <div class="career-list" id="careerList"></div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  let allCareers = [];
+  let currentFilter = 'all';
+  let pendingDeleteId = null;
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie('csrftoken');
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.className = `show ${type}`;
+    t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.className = '', 3200);
+  }
+
+  function badgeClass(type) {
+    if(type==='full-time') return 'badge-full';
+    if(type==='part-time') return 'badge-part';
+    if(type==='internship') return 'badge-intern';
+    return 'badge-full';
+  }
+
+  function badgeLabel(type) {
+    if(type==='full-time')  return '<i class="fas fa-clock" style="margin-right:5px"></i>Full-Time';
+    if(type==='part-time')  return '<i class="fas fa-clock" style="margin-right:5px"></i>Part-Time';
+    if(type==='internship') return '<i class="fas fa-graduation-cap" style="margin-right:5px"></i>Internship';
+    return type;
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderCareers(list) {
+    const el = document.getElementById('careerList');
+    const count = document.getElementById('listingCount');
+    const stat = document.getElementById('statCount');
+
+    stat.textContent = allCareers.length;
+
+    if(!list.length) {
+      count.textContent = 'No postings found';
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fas fa-briefcase"></i></div>
+          <h3>No Openings Yet</h3>
+          <p>Add a career using the form on the left to get started.</p>
+        </div>`;
+      return;
+    }
+
+    const word = list.length === 1 ? 'posting' : 'postings';
+    count.textContent = list.length + ' ' + word + (currentFilter!=='all'?' · filtered':'');
+
+    el.innerHTML = list.map(c => `
+      <div class="career-card" id="card-${c.id}">
+        <div class="card-row">
+          <div class="card-main">
+            <span class="job-type-badge ${badgeClass(c.job_type)}">${badgeLabel(c.job_type)}</span>
+            <div class="job-title">${escHtml(c.title)}</div>
+            <div class="job-location"><i class="fas fa-map-marker-alt"></i>${escHtml(c.location)}</div>
+            <div class="job-desc">${escHtml(c.description)}</div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-del" onclick="openConfirm(${c.id})">
+              <i class="fas fa-trash-alt"></i> Delete
+            </button>
+            <div class="card-id">#${c.id}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.ftab').forEach(b => b.classList.remove('on'));
+    if(btn) btn.classList.add('on');
+
+    const filtered = f==='all' ? allCareers : allCareers.filter(c => c.job_type === f);
+    renderCareers(filtered);
+  }
+
+  async function loadCareers() {
+    try {
+      const res = await fetch('/myapp/get_careers/');
+      const data = await res.json();
+      allCareers = data;
+      const filtered = currentFilter==='all' ? allCareers : allCareers.filter(c => c.job_type === currentFilter);
+      renderCareers(filtered);
+    } catch(err) {
+      console.error(err);
+      document.getElementById('careerList').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fas fa-wifi-slash"></i></div>
+          <h3>Connection Error</h3>
+          <p>Could not reach the server.</p>
+        </div>`;
+    }
+  }
+
+  // Add Career
+  document.getElementById('careerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = 'Adding...';
+    btn.disabled = true;
+
+    const body = {
+      title: document.querySelector('input[name="title"]').value,
+      location: document.querySelector('input[name="location"]').value,
+      job_type: document.querySelector('select[name="job_type"]').value,
+      description: document.querySelector('textarea[name="description"]').value
+    };
+
+    try {
+      const res = await fetch('/myapp/add_career/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error("Add failed");
+
+      showToast(data.message || "Added Successfully", "success");
+      this.reset();
+      loadCareers();
+    } catch (err) {
+      console.error(err);
+      showToast("Add Failed", "error");
+    }
+
+    btn.innerHTML = '<i class="fas fa-plus-circle"></i> Add Career';
+    btn.disabled = false;
+  });
+
+  // Delete Functions
+  function openConfirm(id) {
+    pendingDeleteId = id;
+    document.getElementById('confirmModal').classList.add('open');
+    document.getElementById('confirmBtn').onclick = () => doDelete(id);
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirmModal').classList.remove('open');
+  }
+
+  async function doDelete(id) {
+    closeConfirm();
+    const card = document.getElementById('card-' + id);
+    if (card) card.style.opacity = "0.5";
+
+    try {
+      const res = await fetch('/myapp/delete_career/' + id + '/', {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': csrftoken }
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error("Delete failed");
+
+      showToast(data.message || "Deleted Successfully", "success");
+      loadCareers();
+    } catch (err) {
+      console.error(err);
+      showToast("Delete Failed", "error");
+      if (card) card.style.opacity = "1";
+    }
+  }
+
+  document.getElementById('confirmModal').addEventListener('click', function(e){
+    if(e.target === this) closeConfirm();
+  });
+
+  // Initialize
+  loadCareers();
+</script>
+</body>
+</html>
