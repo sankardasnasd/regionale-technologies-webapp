@@ -6,6 +6,7 @@ from myapp import views
 
 urlpatterns = [
 
+    path('regional_technologies/',views.regional_technologies),
     path('admin_login_page/',views.admin_login_page),
     path('admin_login_api/',views.admin_login_api),
     path('admin_logout_api/',views.admin_logout_api),

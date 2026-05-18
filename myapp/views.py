@@ -104,6 +104,10 @@ from rest_framework import status
 @api_view(['GET'])
 def contact_list(request):
     contacts = Contact.objects.all().order_by('-created_at')  # Latest first
+    print(contacts,'contacts==========')
+    print(contacts,'contacts==========')
+    print(contacts,'contacts==========')
+    print(contacts,'contacts==========')
     serializer = ContactSerializer(contacts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -113,6 +117,8 @@ def contact_list(request):
 def contact_api(request):
 
     serializer = ContactSerializer(data=request.data)
+
+    print(serializer,'=========')
 
     if serializer.is_valid():
 
@@ -127,6 +133,10 @@ def contact_api(request):
     return Response(serializer.errors)
 
 
+
+
+def regional_technologies(request):
+    return render(request,'regional_technologies.html')
 
 def contact_api_get(request):
     return render(request,'regional 2.html')
